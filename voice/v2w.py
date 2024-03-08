@@ -85,22 +85,29 @@ def check_new_emails():
   
         # 删除前两行  
         body_lines = body.splitlines()[2:]  
-  
-        # 遍历修改后的行列表，找到以“您的账号”开头的行及其后所有行并删除  
+
+        # 遍历修改后的行列表，找到以“您的账号”或“要回复此短信”开头的行并跳过  
         # 创建一个新列表，用于存储需要保留的行  
         filtered_lines = []  
-        delete_lines = False  
+        skip_lines = False  
         for line in body_lines:  
+            # 如果找到了以“您的账号”开头的行，则设置 skip_lines 为 True  
             if line.strip().startswith('您的账号'):  
-                delete_lines = True  
-            if not delete_lines:  
-                filtered_lines.append(line)  
+                skip_lines = True  
+            # 如果 skip_lines 为 True，则跳过当前行及后续所有行  
+            if skip_lines:  
+                continue  
+            # 如果行以“要回复此短信”开头，则跳过该行  
+            if line.strip().startswith('要回复此短信'):  
+                continue  
+            # 否则，将行添加到 filtered_lines 中  
+            filtered_lines.append(line)  
   
         # 将保留的行合并回一个字符串  
         filtered_body = '\n'.join(filtered_lines)    
   
         # 将正文和清理后的标题拼接保存到content变量中  
-        content = f"{filtered_body}\n{cleaned_subject}"  
+        content = f"{filtered_body}\n\n{cleaned_subject}"  
   
         # 通过企业微信应用推送  
         access_token = get_wechat_access_token()  
