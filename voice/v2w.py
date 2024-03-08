@@ -102,7 +102,7 @@ def check_new_emails():
         # 将正文和清理后的标题拼接保存到content变量中  
         content = f"{filtered_body}\n{cleaned_subject}"  
   
-        # 打印内容或进行其他处理  
+        # 通过企业微信应用推送  
         access_token = get_wechat_access_token()  
         send_wechat_message(access_token, content) 
   
