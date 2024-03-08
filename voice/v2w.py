@@ -33,13 +33,13 @@ def send_wechat_message(access_token, content):
     url = f"https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token={access_token}"  
     headers = {"Content-Type": "application/json"} 
     data = {  
-        "touser": WECHAT_USERID,  
+        "touser": touser,  
         "msgtype": "text",  
-        "agentid": WECHAT_AGENTID,  
+        "agentid": agentid,  
         "text": {  
             "content": content  
         },  
-        "safe": 0  
+        "safe": 0
     }  
     response = requests.post(url, headers=headers, data=json.dumps(data))  
     return response.json()  
