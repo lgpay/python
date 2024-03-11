@@ -67,6 +67,15 @@ def check_new_emails():
 
             # 解析邮件发件人
             sender_name = email.utils.parseaddr(email_message['From'])[0]
+            sender_mail = email.utils.parseaddr(email_message['From'])[1]
+            # 截取收件号码
+            phone_number_part = sender_mail[1:11]
+            # 将截取的部分格式化为(xxx) xxx-xxxx的形式
+            phone_number = "({:03d}) {:03d}-{:04d}".format(
+                int(phone_number_part[:3]),  # 前三位数字
+                int(phone_number_part[3:6]),  # 中间三位数字
+                int(phone_number_part[6:])    # 最后四位数字
+            )  
 
             # 解析邮件时间（UTC）
             utc_time = email.utils.parsedate_to_datetime(email_message['Date'])
@@ -111,7 +120,7 @@ def check_new_emails():
             filtered_body = '\n'.join(filtered_lines)
 
             # 将内容拼接保存到content变量中
-            content = f"{sender_name}\n{filtered_body}\n\n{formatted_time}"
+            content = f"{sender_name}\n{filtered_body}\n\nVoice: {phone_number}\n{formatted_time}"
 
             # 通过企业微信应用推送
             access_token = get_wechat_access_token()
