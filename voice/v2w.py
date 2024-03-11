@@ -5,6 +5,8 @@ import time
 import json  
 import requests
 import configparser
+from datetime import datetime, timedelta  
+import pytz
 
 # 读取配置文件  
 config = configparser.ConfigParser()  
@@ -63,13 +65,15 @@ def check_new_emails():
         raw_email = msg_data[0][1].decode('utf-8')  
         email_message = email.message_from_string(raw_email)  
   
-        # 解析邮件标题  
-        subject = decode_header(email_message['Subject'])[0][0]  
-        if isinstance(subject, bytes):  
-            subject = subject.decode()  
+        # 解析邮件发件人  
+        sender_name = email.utils.parseaddr(email_message['From'])[0]  
   
-        # 删除subject中的“收到”和“新”字符  
-        cleaned_subject = subject.replace('收到', '').replace('新', '')  
+        # 解析邮件时间（UTC）  
+        utc_time = email.utils.parsedate_to_datetime(email_message['Date'])  
+        # 将UTC时间转换为北京时间（东八区）  
+        beijing_time = utc_time.astimezone(pytz.timezone('Asia/Shanghai'))    
+        # 格式化时间，去掉时区信息  
+        formatted_time = beijing_time.strftime('%Y-%m-%d %H:%M:%S')  
   
         # 解析邮件正文  
         body = ''  
@@ -107,7 +111,7 @@ def check_new_emails():
         filtered_body = '\n'.join(filtered_lines)    
   
         # 将正文和清理后的标题拼接保存到content变量中  
-        content = f"{filtered_body}\n\n{cleaned_subject}"  
+        content = f"{sender_name}\n{cleaned_subject}\n\n{formatted_time}"  
   
         # 通过企业微信应用推送  
         access_token = get_wechat_access_token()  
