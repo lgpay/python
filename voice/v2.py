@@ -18,11 +18,10 @@ imap_user = config['imap']['user']
 imap_pass = config['imap']['password']
 
 # 从配置文件中获取微信企业应用的信息
-wechat_enterprise = config['wechat_enterprise']
-corpid = wechat_enterprise['corpid']
-corpsecret = wechat_enterprise['corpsecret']
-agentid = wechat_enterprise['agentid']
-touser = wechat_enterprise['touser']
+corpid = config['wechat_enterprise']['corpid']
+corpsecret = config['wechat_enterprise']['corpsecret']
+agentid = config['wechat_enterprise']['agentid']
+touser = config['wechat_enterprise']['touser']
 
 # 获取微信企业应用的access_token
 def get_wechat_access_token():
@@ -111,7 +110,7 @@ def check_new_emails():
             # 将保留的行合并回一个字符串
             filtered_body = '\n'.join(filtered_lines)
 
-            # 将正文和清理后的标题拼接保存到content变量中
+            # 将内容拼接保存到content变量中
             content = f"{sender_name}\n{filtered_body}\n\n{formatted_time}"
 
             # 通过企业微信应用推送
